@@ -1,0 +1,36 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.Json.Serialization;
+using System.Threading.Tasks;
+
+namespace TrafficInjector.Plugin
+{
+    public record AircraftDTO
+    {
+        [JsonPropertyName("hex")]
+        public string? HexCode { get; set; }
+
+        [JsonPropertyName("flight")]
+        public string? Callsign { get; set; }
+
+        [JsonPropertyName("alt_geom")]
+        public int? Altitude { get; set; }
+
+        [JsonPropertyName("lat")]
+        public float? Latitude { get; set; }
+
+        [JsonPropertyName("lon")]
+        public float? Longitude { get; set; }
+
+        public bool IsValid()
+        {
+            return !string.IsNullOrWhiteSpace(HexCode) &&
+                   !string.IsNullOrWhiteSpace(Callsign) &&
+                   Altitude.HasValue &&
+                   Latitude.HasValue &&
+                   Longitude.HasValue;
+        }
+    }
+}
