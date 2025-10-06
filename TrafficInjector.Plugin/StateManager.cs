@@ -34,7 +34,7 @@ namespace TrafficInjector.Plugin
                     PressureAltitude = dto.Altitude!.Value,
                 };
 
-                var rt = new vatsys.RDP.RadarTrack()
+                var rt = new RDP.RadarTrack()
                 {
                     ActualAircraft = networkPilot,
                     AboveTransition = true,
