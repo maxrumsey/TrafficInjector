@@ -13,10 +13,12 @@ namespace TrafficInjector.Plugin
     {
         private Timer? _timer;
         private readonly Fetcher _fetcher;
+        private readonly StateManager _stateManager;
 
-        public TimedService(Fetcher fetcher)
+        public TimedService(Fetcher fetcher, StateManager stateManager)
         {
             _fetcher = fetcher;
+            _stateManager = stateManager;
         }
 
         public void Dispose()
@@ -27,8 +29,20 @@ namespace TrafficInjector.Plugin
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _timer = new Timer(FetchData, null, TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(3));
-
+            _timer = new Timer(ClearData, null, TimeSpan.FromSeconds(15), TimeSpan.FromSeconds(1));
             return Task.CompletedTask;
+        }
+
+        private void ClearData(object? state)
+        {
+            try
+            {
+                _stateManager.RemoveExpiredAircraft();
+            }
+            catch (Exception ex)
+            {
+                Errors.Add(ex, "Traffic Injector");
+            }
         }
 
         private async void FetchData(object? state)

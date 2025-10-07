@@ -45,5 +45,18 @@ namespace TrafficInjector.Plugin
                 }
             }
         }
+
+        public void RemoveExpiredAircraft()
+        {
+            var expired = _repo.GetAndRemoveExpired();
+
+            foreach (var aircraft in expired)
+            {
+                if (aircraft.Track is not null)
+                {
+                    _mmi.RemoveTrack(aircraft);
+                }
+            }
+        }
     }
 }
