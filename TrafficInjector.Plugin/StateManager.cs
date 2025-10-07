@@ -9,8 +9,15 @@ namespace TrafficInjector.Plugin
 {
     public class StateManager
     {
-        public StateManager(Fetcher fetcher)
+        private vatSysMMI _mmi;
+        private RadarTargetRepository _repo;
+
+        public StateManager(Fetcher fetcher,
+            vatSysMMI MMI,
+            RadarTargetRepository targets)
         {
+            _mmi = MMI;
+            _repo = targets;
             fetcher.AircraftReceived += AircraftDataReceived; ;
         }
 
@@ -28,20 +35,14 @@ namespace TrafficInjector.Plugin
                     continue;
                 }
 
-                var networkPilot = new NetworkPilot()
-                {
-                    Callsign = dto.Callsign!,
-                    PressureAltitude = dto.Altitude!.Value,
-                };
+                var target = _repo.AddOrUpdate(dto);
 
-                var rt = new RDP.RadarTrack()
+                if (target.Track is null)
                 {
-                    ActualAircraft = networkPilot,
-                    AboveTransition = true,
-                    LatLong = new(dto.Latitude.GetValueOrDefault(), dto.Longitude.GetValueOrDefault()),
-                };
+                    target.Track = _mmi.AddTrack(target);
 
-                
+                    RDP.AddQuickTag(target, new(target, target.Callsign));
+                }
             }
         }
     }

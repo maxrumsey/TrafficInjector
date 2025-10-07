@@ -13,6 +13,9 @@ namespace TrafficInjector.Plugin
         {
             return 
                 services.AddSingleton<Fetcher>()
+                    .AddSingleton<StateManager>()
+                    .AddSingleton<vatSysMMI>()
+                    .AddSingleton<RadarTargetRepository>()
                     .AddHttpClient()
                     .AddHostedService<TimedService>();
         }

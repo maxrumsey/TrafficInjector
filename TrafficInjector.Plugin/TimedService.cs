@@ -26,7 +26,7 @@ namespace TrafficInjector.Plugin
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _timer = new Timer(FetchData, null, TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(1));
+            _timer = new Timer(FetchData, null, TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(3));
 
             return Task.CompletedTask;
         }

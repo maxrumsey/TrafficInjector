@@ -24,6 +24,15 @@ namespace TrafficInjector.Plugin
         [JsonPropertyName("lon")]
         public float? Longitude { get; set; }
 
+        [JsonPropertyName("track")]
+        public float Track { get; set; } = 0;
+
+        [JsonPropertyName("gs")]
+        public float GroundSpeed { get; set; } = 0;
+
+        [JsonPropertyName("nav_altitude_mcp")]
+        public int? SelectedAltitude { get; set; }
+
         public bool IsValid()
         {
             return !string.IsNullOrWhiteSpace(HexCode) &&

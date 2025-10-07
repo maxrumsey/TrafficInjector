@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.ComponentModel.Composition;
@@ -40,6 +41,8 @@ namespace TrafficInjector.Plugin
             try
             {
                 await PluginHost.StartAsync();
+
+                var stateManager = PluginHost.Services.GetRequiredService<StateManager>();
             }
             catch (Exception ex)
             {

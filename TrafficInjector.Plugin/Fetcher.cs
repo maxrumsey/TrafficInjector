@@ -13,7 +13,7 @@ namespace TrafficInjector.Plugin
     public class Fetcher
     {
         private readonly HttpClient _httpClient;
-        private readonly string _baseUrl = "https://opendata.adsb.fi/api/v2";
+        private readonly string _baseUrl = "https://opendata.adsb.fi/api/v2/";
         private readonly ILogger _logger;
 
         public Fetcher(HttpClient httpClient, ILogger<Fetcher> logger)
@@ -28,7 +28,7 @@ namespace TrafficInjector.Plugin
 
         public async Task<HttpResponseMessage> Fetch()
         {
-            var res = await _httpClient.GetAsync("/lat/-37.68390/lon/144.85104/dist/50");
+            var res = await _httpClient.GetAsync("lat/-37.68390/lon/144.85104/dist/50");
 
             return res;
         }
