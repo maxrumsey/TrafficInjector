@@ -9,11 +9,11 @@ namespace TrafficInjector.Plugin
 {
     public class StateManager
     {
-        private vatSysMMI _mmi;
+        private vatSysAccessor _mmi;
         private RadarTargetRepository _repo;
 
         public StateManager(Fetcher fetcher,
-            vatSysMMI MMI,
+            vatSysAccessor MMI,
             RadarTargetRepository targets)
         {
             _mmi = MMI;

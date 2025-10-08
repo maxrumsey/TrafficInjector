@@ -8,14 +8,19 @@ using vatsys;
 
 namespace TrafficInjector.Plugin
 {
-    public class vatSysMMI
+    public class vatSysAccessor
     {
         private MethodInfo _addTrackMethod;
 
         private MethodInfo _removeTrackMethod;
-        
-        public vatSysMMI()
+
+        private MethodInfo _visCentreGetter;
+
+        public vatSysAccessor()
         {
+            var netInstance = typeof(Network).GetProperty("Instance", BindingFlags.Static | BindingFlags.NonPublic, null,
+                typeof(Network), null)?.GetValue(null) ?? throw new Exception("Could not fetch Network.Instance.");
+
             _addTrackMethod = typeof(MMI).GetMethod("AddTrack",
                 System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic, null,
                 new Type[] { typeof(object), typeof(Track.TrackTypes) }, null) ?? throw new Exception("Could not fetch AddTrack.");
@@ -23,6 +28,8 @@ namespace TrafficInjector.Plugin
             _removeTrackMethod = typeof(MMI).GetMethod("RemoveTrack",
                 System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic, null,
                 new Type[] { typeof(object) }, null) ?? throw new Exception("Could not fetch RemoveTrack.");
+
+            _visCentreGetter = typeof(Network).GetProperty("VisibilityCentres", BindingFlags.NonPublic)?.GetGetMethod() ?? throw new Exception("Could not fetch Network.VisibilityCentres getter.");
         }
 
         public Track AddTrack(RDP.RadarTrack rt)
