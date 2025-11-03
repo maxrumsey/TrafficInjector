@@ -18,6 +18,7 @@ namespace TrafficInjector.Plugin
                     .AddSingleton<RadarTargetRepository>()
                     .AddSingleton<PendingDTORepository>()
                     .AddHttpClient()
+                    .AddHostedService<BackgroundWorker>()
                     .AddHostedService<TimedService>();
         }
     }

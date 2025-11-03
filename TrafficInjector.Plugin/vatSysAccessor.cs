@@ -52,17 +52,16 @@ namespace TrafficInjector.Plugin
             _clearTracksMethod.Invoke(null, []);
         }
 
-        public List<Coordinate> GetVisCentres()
+        public IList<Coordinate> GetVisCentres()
         {
             var visCentres = _visCentreGetter.Invoke(GetNetworkInstance(), []) ?? throw new Exception("Could not get vis centres");
             
-            return (List<Coordinate>)visCentres;
+            return (IList<Coordinate>)visCentres;
         }
 
         private Network GetNetworkInstance()
         {
-            var inst = typeof(Network).GetProperty("Instance", BindingFlags.Static | BindingFlags.NonPublic, null,
-                typeof(Network), [], [])?.GetValue(null) ?? throw new Exception("Could not fetch Network.Instance.");
+            var inst = typeof(Network).GetField("Instance", BindingFlags.Static | BindingFlags.NonPublic)?.GetValue(null) ?? throw new Exception("Could not fetch Network.Instance.");
 
             return (Network)inst;
         }

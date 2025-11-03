@@ -26,6 +26,16 @@ namespace TrafficInjector.Plugin
             var menuItem = new CustomToolStripMenuItem(CustomToolStripMenuItemWindowType.Main, CustomToolStripMenuItemCategory.Settings, new ToolStripMenuItem("Traffic Injector"));
             menuItem.Item.Click += ToggleActive;
             MMI.AddCustomMenuItem(menuItem);
+            Network.Connected += Connected;
+        }
+
+        private async void Connected(object sender, EventArgs e)
+        {
+            if (_isRunning)
+            {
+                Errors.Add(new("Stopping injection due to network connection."), "Traffic Injector");
+                await Stop();
+            }
         }
 
         private async void ToggleActive(object sender, EventArgs e)
@@ -54,6 +64,11 @@ namespace TrafficInjector.Plugin
         {
             try
             {
+                if (Network.IsConnected)
+                {
+                    throw new Exception("Can't start traffic injection while connected to the network.");
+                }
+
                 var builder = Host.CreateApplicationBuilder();
 
                 builder.Services.AddTrafficInjector();
@@ -62,7 +77,7 @@ namespace TrafficInjector.Plugin
                 PluginHost = builder.Build();
 
                 await PluginHost.StartAsync();
-                
+
                 PluginHost.Services.GetRequiredService<StateManager>().RegisterEvents();
                 _isRunning = true;
             }

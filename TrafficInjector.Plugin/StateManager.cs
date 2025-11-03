@@ -28,41 +28,13 @@ namespace TrafficInjector.Plugin
             _host = host;
             _fetcher = fetcher;
             _pendingDTOs = pendingDTOs;
-
-            if (Network.IsConnected)
-            {
-                _ = Connected();
-            }
         }
 
         public void RegisterEvents()
         {
-            Network.Connected += Connected;
             _fetcher.AircraftReceived += AircraftDataReceived;
         }
 
-        public void DeregisterEvents()
-        {
-            Network.Connected -= Connected;
-        }
-
-        private async void Connected(object sender, EventArgs e)
-        {
-            await Connected();
-        }
-        
-        private async Task Connected()
-        {
-            try
-            {
-                await _host.StopAsync();
-                throw new Exception("Stopping traffic injection due to Network Connection");
-            }
-            catch (Exception ex)
-            {
-                Errors.Add(ex, "TrafficInjector");
-            }
-        }
 
         private void AircraftDataReceived(object sender, Fetcher.FetcherEventArgs<AircraftDTO[]> e)
         {
@@ -108,7 +80,6 @@ namespace TrafficInjector.Plugin
 
         public void Dispose()
         {
-            DeregisterEvents();
             _mmi.ClearTracks();
         }
 

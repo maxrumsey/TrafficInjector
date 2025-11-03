@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using vatsys;
 
 namespace TrafficInjector.Plugin
 {
@@ -15,20 +16,22 @@ namespace TrafficInjector.Plugin
         private readonly HttpClient _httpClient;
         private readonly string _baseUrl = "https://opendata.adsb.fi/api/v2/";
         private readonly ILogger _logger;
+        private readonly vatSysAccessor _vatSys;
 
-        public Fetcher(HttpClient httpClient, ILogger<Fetcher> logger)
+        public Fetcher(HttpClient httpClient, ILogger<Fetcher> logger, vatSysAccessor vatSys)
         {
             _logger = logger;
             _httpClient = httpClient;
             _httpClient.BaseAddress = new Uri(_baseUrl);
+            _vatSys = vatSys;
 
         }
 
         public event EventHandler<FetcherEventArgs<AircraftDTO[]>> AircraftReceived;
 
-        public async Task<HttpResponseMessage> Fetch()
+        public async Task<HttpResponseMessage> Fetch(Coordinate coord)
         {
-            var res = await _httpClient.GetAsync("lat/-37.68390/lon/144.85104/dist/50");
+            var res = await _httpClient.GetAsync($"lat/{coord.Latitude}/lon/{coord.Longitude}/dist/250");
 
             return res;
         }
@@ -42,9 +45,9 @@ namespace TrafficInjector.Plugin
             return parsedResponse?.Aircraft ?? Array.Empty<AircraftDTO>();
         }
 
-        public async Task FetchAndFireDTOs()
+        public async Task FetchAndFireDTOs(Coordinate coord)
         {
-            var response = await Fetch();
+            var response = await Fetch(coord);
 
             if (response.IsSuccessStatusCode)
             {
@@ -55,6 +58,30 @@ namespace TrafficInjector.Plugin
                 if (validDtos.Length > 0)
                 {
                     AircraftReceived?.Invoke(this, new FetcherEventArgs<AircraftDTO[]>() { Data = validDtos });
+                }
+            }
+        }
+
+        public async Task FetchForAllVisCentres()
+        {
+            var visCentres = _vatSys.GetVisCentres() ?? throw new Exception("Could not fetch vis centres.");
+
+            foreach (var ctr in visCentres)
+            {
+                try
+                {
+                    
+                    await FetchAndFireDTOs(ctr);
+
+                }
+                catch (Exception ex)
+                {
+                    Errors.Add(ex, "Traffic Injector");
+                }
+                finally
+                {
+
+                    await Task.Delay(1000);
                 }
             }
         }
