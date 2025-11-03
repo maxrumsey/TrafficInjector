@@ -97,7 +97,6 @@ namespace TrafficInjector.Plugin
                     }
 
                     _mmi.RemoveTrack(aircraft);
-
                 }
             }
         }

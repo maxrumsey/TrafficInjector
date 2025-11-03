@@ -35,11 +35,11 @@ namespace TrafficInjector.Plugin
         {
             lock (_targets)
             {
-                var targets = _targets.Where(x => x.LastUpdated <= DateTime.Now.Subtract(TimeSpan.FromSeconds(15)));
+                var targets = _targets.Where(x => x.LastUpdated <= DateTime.Now.Subtract(TimeSpan.FromSeconds(15))).ToArray();
 
                 _targets.RemoveAll(targets.Contains);
 
-                return targets.ToArray();
+                return targets;
             }
         }
 
