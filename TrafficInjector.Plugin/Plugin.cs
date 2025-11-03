@@ -19,6 +19,13 @@ namespace TrafficInjector.Plugin
         public Plugin()
         {
             AddMenuItem();
+            Network.Connected += Connected;
+            Application.ThreadExit += Closing;
+        }
+
+        private void Closing(object sender, EventArgs e)
+        {
+            Stop().Wait();
         }
 
         private void AddMenuItem()
@@ -26,7 +33,6 @@ namespace TrafficInjector.Plugin
             var menuItem = new CustomToolStripMenuItem(CustomToolStripMenuItemWindowType.Main, CustomToolStripMenuItemCategory.Settings, new ToolStripMenuItem("Traffic Injector"));
             menuItem.Item.Click += ToggleActive;
             MMI.AddCustomMenuItem(menuItem);
-            Network.Connected += Connected;
         }
 
         private async void Connected(object sender, EventArgs e)
