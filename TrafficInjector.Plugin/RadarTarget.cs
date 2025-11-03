@@ -42,8 +42,12 @@ namespace TrafficInjector.Plugin
 
             Location = new(dto.Latitude.GetValueOrDefault(), dto.Longitude.GetValueOrDefault());
 
-            ActualAircraft.PressureAltitude = dto.Altitude!.Value;
-            ActualAircraft.TrueAltitude = dto.Altitude!.Value;
+            var altitude = dto.AltitudeGeom!.Value > 10500 ? dto.AltitudeBaro : dto.AltitudeGeom!.Value;
+
+            altitude = RoundToHundred(altitude);
+
+            ActualAircraft.PressureAltitude = altitude;
+            ActualAircraft.TrueAltitude = altitude;
             ActualAircraft.GroundSpeed = (int)dto.GroundSpeed;
             ActualAircraft.Heading = (int)dto.Track;
             ActualAircraft.Position = Location;
@@ -52,7 +56,7 @@ namespace TrafficInjector.Plugin
             LatLong = Location;
             GroundSpeed = dto.GroundSpeed;
             Heading = dto.Track;
-            CorrectedAltitude = dto.Altitude!.Value;
+            CorrectedAltitude = altitude;
 
             if (_lastAltitude != -1)
             {
@@ -70,8 +74,13 @@ namespace TrafficInjector.Plugin
 
             if (dto.SelectedAltitude is not null && QuickTag is not null)
             {
-                QuickTag.CFL = dto.SelectedAltitude.Value;
+                QuickTag.CFL = RoundToHundred(dto.SelectedAltitude.Value);
             }
+        }
+
+        private int RoundToHundred(int x)
+        {
+            return (int)(Math.Round(x / 100d, 0) * 100d);
         }
     }
 }

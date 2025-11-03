@@ -16,7 +16,24 @@ namespace TrafficInjector.Plugin
         public string? Callsign { get; set; }
 
         [JsonPropertyName("alt_geom")]
-        public int? Altitude { get; set; }
+        public int? AltitudeGeom { get; set; }
+
+        [JsonIgnore]
+        public int AltitudeBaro
+        {
+            get
+            {
+                if (int.TryParse(AltitudeBaroRaw?.ToString(), out int result))
+                {
+                    return result;
+                }
+
+                return 0;
+            }
+        }
+
+        [JsonPropertyName("alt_baro")]
+        public object? AltitudeBaroRaw { get; set; }
 
         [JsonPropertyName("lat")]
         public float? Latitude { get; set; }
@@ -37,7 +54,7 @@ namespace TrafficInjector.Plugin
         {
             return !string.IsNullOrWhiteSpace(HexCode) &&
                    !string.IsNullOrWhiteSpace(Callsign) &&
-                   Altitude.HasValue &&
+                   AltitudeGeom.HasValue &&
                    Latitude.HasValue &&
                    Longitude.HasValue;
         }
