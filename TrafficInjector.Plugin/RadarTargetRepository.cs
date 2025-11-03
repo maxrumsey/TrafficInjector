@@ -8,23 +8,39 @@ namespace TrafficInjector.Plugin
 {
     public class RadarTargetRepository
     {
-        public List<RadarTarget> Targets { get; set; } = new();
+        private List<RadarTarget> _targets = new();
 
         public RadarTarget AddOrUpdate(AircraftDTO dto)
         {
-            var target = Targets.FirstOrDefault(t => t.Hex == dto.HexCode && t.Callsign == dto.Callsign);
-
-            if (target is null)
+            lock (_targets)
             {
-                target = new RadarTarget(dto);
-                Targets.Add(target);
-            }
-            else
-            {
-                target.Update(dto);
-            }
 
-            return target;
+                var target = _targets.FirstOrDefault(t => t.Hex == dto.HexCode && t.Callsign == dto.Callsign);
+
+                if (target is null)
+                {
+                    target = new RadarTarget(dto);
+                    _targets.Add(target);
+                }
+                else
+                {
+                    target.Update(dto);
+                }
+
+                return target;
+            }
+        }
+
+        public RadarTarget[] GetAndRemoveExpired()
+        {
+            lock (_targets)
+            {
+                var targets = _targets.Where(x => x.LastUpdated <= DateTime.Now.Subtract(TimeSpan.FromSeconds(5)));
+
+                _targets.RemoveAll(targets.Contains);
+
+                return targets.ToArray();
+            }
         }
     }
 }

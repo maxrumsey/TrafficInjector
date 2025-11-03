@@ -11,13 +11,13 @@ namespace TrafficInjector.Plugin
 {
     public class StateManager : IDisposable
     {
-        private vatSysMMI _mmi;
+        private vatSysAccessor _mmi;
         private RadarTargetRepository _repo;
         private IHost _host;
         private Fetcher _fetcher;
 
         public StateManager(Fetcher fetcher,
-            vatSysMMI MMI,
+            vatSysAccessor MMI,
             RadarTargetRepository targets,
             IHost host)
         {
@@ -90,6 +90,19 @@ namespace TrafficInjector.Plugin
         {
             DeregisterEvents();
             _mmi.ClearTracks();
+        }
+
+        public void RemoveExpiredAircraft()
+        {
+            var expired = _repo.GetAndRemoveExpired();
+
+            foreach (var aircraft in expired)
+            {
+                if (aircraft.Track is not null)
+                {
+                    _mmi.RemoveTrack(aircraft);
+                }
+            }
         }
     }
 }

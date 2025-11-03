@@ -9,6 +9,8 @@ namespace TrafficInjector.Plugin
 {
     public class RadarTarget : RDP.RadarTrack
     {
+        private int _lastAltitude = -1;
+
         public string Callsign { get; set; }
 
         public string Hex { get; set; }
@@ -37,7 +39,6 @@ namespace TrafficInjector.Plugin
 
         public void Update(AircraftDTO dto)
         {
-            LastUpdated = DateTime.Now;
 
             Location = new(dto.Latitude.GetValueOrDefault(), dto.Longitude.GetValueOrDefault());
 
@@ -52,7 +53,19 @@ namespace TrafficInjector.Plugin
             GroundSpeed = dto.GroundSpeed;
             Heading = dto.Track;
             CorrectedAltitude = dto.Altitude!.Value;
+            
+
+            if (_lastAltitude != -1)
+            {
+                var deltaTime = (DateTime.Now - LastUpdated).TotalMinutes;
+                VerticalSpeed = (CorrectedAltitude - _lastAltitude) / deltaTime;
+            }
+
+            LastUpdated = DateTime.Now;
+
             Timestamp = LastUpdated;
+
+            _lastAltitude = CorrectedAltitude;
 
             AddPositionHistory(new(Location, GroundSpeed, Heading, LastUpdated, false));
 
