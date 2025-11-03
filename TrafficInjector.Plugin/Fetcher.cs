@@ -24,7 +24,7 @@ namespace TrafficInjector.Plugin
 
         }
 
-        public event EventHandler<FetcherEventArgs<AircraftDTO[]>>? AircraftReceived;
+        public event EventHandler<FetcherEventArgs<AircraftDTO[]>> AircraftReceived;
 
         public async Task<HttpResponseMessage> Fetch()
         {

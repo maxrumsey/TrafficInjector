@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Extensions.FileSystemGlobbing;
+using Microsoft.Extensions.Hosting;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,18 +9,56 @@ using vatsys;
 
 namespace TrafficInjector.Plugin
 {
-    public class StateManager
+    public class StateManager : IDisposable
     {
         private vatSysMMI _mmi;
         private RadarTargetRepository _repo;
+        private IHost _host;
+        private Fetcher _fetcher;
 
         public StateManager(Fetcher fetcher,
             vatSysMMI MMI,
-            RadarTargetRepository targets)
+            RadarTargetRepository targets,
+            IHost host)
         {
             _mmi = MMI;
             _repo = targets;
-            fetcher.AircraftReceived += AircraftDataReceived; ;
+            _host = host;
+            _fetcher = fetcher;
+
+            if (Network.IsConnected)
+            {
+                _ = Connected();
+            }
+        }
+
+        public void RegisterEvents()
+        {
+            Network.Connected += Connected;
+            _fetcher.AircraftReceived += AircraftDataReceived;
+        }
+
+        public void DeregisterEvents()
+        {
+            Network.Connected -= Connected;
+        }
+
+        private async void Connected(object sender, EventArgs e)
+        {
+            await Connected();
+        }
+        
+        private async Task Connected()
+        {
+            try
+            {
+                await _host.StopAsync();
+                throw new Exception("Stopping traffic injection due to Network Connection");
+            }
+            catch (Exception ex)
+            {
+                Errors.Add(ex, "TrafficInjector");
+            }
         }
 
         private void AircraftDataReceived(object sender, Fetcher.FetcherEventArgs<AircraftDTO[]> e)
@@ -44,6 +84,12 @@ namespace TrafficInjector.Plugin
                     RDP.AddQuickTag(target, new(target, target.Callsign));
                 }
             }
+        }
+
+        public void Dispose()
+        {
+            DeregisterEvents();
+            _mmi.ClearTracks();
         }
     }
 }

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.ComponentModel.Composition;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using vatsys;
 using vatsys.Plugin;
 
@@ -12,18 +13,31 @@ namespace TrafficInjector.Plugin
     [Export(typeof(IPlugin))]
     public class Plugin : IPlugin
     {
-        private IHost PluginHost;
+        private IHost? PluginHost;
+        private bool _isRunning = false;
 
         public Plugin()
         {
-            var builder = Host.CreateApplicationBuilder();
+            AddMenuItem();
+        }
 
-            builder.Services.AddTrafficInjector();
-            builder.Logging.AddConsole();
+        private void AddMenuItem()
+        {
+            var menuItem = new CustomToolStripMenuItem(CustomToolStripMenuItemWindowType.Main, CustomToolStripMenuItemCategory.Settings, new ToolStripMenuItem("Traffic Injector"));
+            menuItem.Item.Click += ToggleActive;
+            MMI.AddCustomMenuItem(menuItem);
+        }
 
-            PluginHost = builder.Build();
-
-            Start();
+        private async void ToggleActive(object sender, EventArgs e)
+        {
+            if (!_isRunning)
+            {
+                await Start();
+            }
+            else
+            {
+                await Stop();
+            }
         }
 
         string IPlugin.Name => "Traffic Injector";
@@ -40,9 +54,17 @@ namespace TrafficInjector.Plugin
         {
             try
             {
-                await PluginHost.StartAsync();
+                var builder = Host.CreateApplicationBuilder();
 
-                var stateManager = PluginHost.Services.GetRequiredService<StateManager>();
+                builder.Services.AddTrafficInjector();
+                builder.Logging.AddConsole();
+
+                PluginHost = builder.Build();
+
+                await PluginHost.StartAsync();
+                
+                PluginHost.Services.GetRequiredService<StateManager>().RegisterEvents();
+                _isRunning = true;
             }
             catch (Exception ex)
             {
@@ -54,7 +76,16 @@ namespace TrafficInjector.Plugin
         {
             try
             {
+                if (PluginHost is null)
+                {
+                    return;
+                }
+
                 await PluginHost.StopAsync();
+                PluginHost.Dispose();
+                PluginHost = null;
+
+                _isRunning = false;
             }
             catch (Exception ex)
             {
