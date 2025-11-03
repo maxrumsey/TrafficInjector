@@ -11,11 +11,12 @@ namespace TrafficInjector.Plugin
     {
         public static IServiceCollection AddTrafficInjector(this IServiceCollection services)
         {
-            return 
+            return
                 services.AddSingleton<Fetcher>()
                     .AddSingleton<StateManager>()
                     .AddSingleton<vatSysAccessor>()
                     .AddSingleton<RadarTargetRepository>()
+                    .AddSingleton<PendingDTORepository>()
                     .AddHttpClient()
                     .AddHostedService<TimedService>();
         }

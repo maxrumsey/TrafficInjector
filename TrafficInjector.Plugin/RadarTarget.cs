@@ -53,7 +53,6 @@ namespace TrafficInjector.Plugin
             GroundSpeed = dto.GroundSpeed;
             Heading = dto.Track;
             CorrectedAltitude = dto.Altitude!.Value;
-            
 
             if (_lastAltitude != -1)
             {

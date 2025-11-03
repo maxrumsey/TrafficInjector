@@ -20,9 +20,6 @@ namespace TrafficInjector.Plugin
 
         public vatSysAccessor()
         {
-            var netInstance = typeof(Network).GetProperty("Instance", BindingFlags.Static | BindingFlags.NonPublic, null,
-                typeof(Network), null)?.GetValue(null) ?? throw new Exception("Could not fetch Network.Instance.");
-
             _addTrackMethod = typeof(MMI).GetMethod("AddTrack",
                 System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic, null,
                 new Type[] { typeof(object), typeof(Track.TrackTypes) }, null) ?? throw new Exception("Could not fetch AddTrack.");
@@ -31,7 +28,7 @@ namespace TrafficInjector.Plugin
                 System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic, null,
                 new Type[] { typeof(object) }, null) ?? throw new Exception("Could not fetch RemoveTrack.");
 
-            _visCentreGetter = typeof(Network).GetProperty("VisibilityCentres", BindingFlags.NonPublic)?.GetGetMethod() ?? throw new Exception("Could not fetch Network.VisibilityCentres getter.");
+            _visCentreGetter = typeof(Network).GetProperty("VisibilityCenters", BindingFlags.NonPublic | BindingFlags.Instance)?.GetGetMethod(true) ?? throw new Exception("Could not fetch Network.VisibilityCentres getter.");
 
             _clearTracksMethod = typeof(MMI).GetMethod("ClearTracks",
                 System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic, null,
@@ -53,6 +50,21 @@ namespace TrafficInjector.Plugin
         public void ClearTracks()
         {
             _clearTracksMethod.Invoke(null, []);
+        }
+
+        public List<Coordinate> GetVisCentres()
+        {
+            var visCentres = _visCentreGetter.Invoke(GetNetworkInstance(), []) ?? throw new Exception("Could not get vis centres");
+            
+            return (List<Coordinate>)visCentres;
+        }
+
+        private Network GetNetworkInstance()
+        {
+            var inst = typeof(Network).GetProperty("Instance", BindingFlags.Static | BindingFlags.NonPublic, null,
+                typeof(Network), [], [])?.GetValue(null) ?? throw new Exception("Could not fetch Network.Instance.");
+
+            return (Network)inst;
         }
     }
 }

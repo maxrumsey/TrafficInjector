@@ -35,11 +35,29 @@ namespace TrafficInjector.Plugin
         {
             lock (_targets)
             {
-                var targets = _targets.Where(x => x.LastUpdated <= DateTime.Now.Subtract(TimeSpan.FromSeconds(5)));
+                var targets = _targets.Where(x => x.LastUpdated <= DateTime.Now.Subtract(TimeSpan.FromSeconds(15)));
 
                 _targets.RemoveAll(targets.Contains);
 
                 return targets.ToArray();
+            }
+        }
+
+        public void SetCoastingStatus()
+        {
+            lock (_targets)
+            {
+                foreach (var target in _targets)
+                {
+                    if (target.LastUpdated <= DateTime.Now.Subtract(TimeSpan.FromSeconds(6)))
+                    {
+                        target.Coasting = true;
+                    }
+                    else
+                    {
+                        target.Coasting = false;
+                    }
+                }
             }
         }
     }

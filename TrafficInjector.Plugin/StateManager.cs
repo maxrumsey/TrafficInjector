@@ -15,16 +15,19 @@ namespace TrafficInjector.Plugin
         private RadarTargetRepository _repo;
         private IHost _host;
         private Fetcher _fetcher;
+        private PendingDTORepository _pendingDTOs;
 
         public StateManager(Fetcher fetcher,
             vatSysAccessor MMI,
             RadarTargetRepository targets,
-            IHost host)
+            IHost host,
+            PendingDTORepository pendingDTOs)
         {
             _mmi = MMI;
             _repo = targets;
             _host = host;
             _fetcher = fetcher;
+            _pendingDTOs = pendingDTOs;
 
             if (Network.IsConnected)
             {
@@ -75,14 +78,31 @@ namespace TrafficInjector.Plugin
                     continue;
                 }
 
-                var target = _repo.AddOrUpdate(dto);
+                _pendingDTOs.AddOrUpdate(dto);
+            }
+        }
 
-                if (target.Track is null)
-                {
-                    target.Track = _mmi.AddTrack(target);
+        public void UpdateTracks()
+        {
+            var pending = _pendingDTOs.EmptyAndReturnPending();
 
-                    RDP.AddQuickTag(target, new(target, target.Callsign));
-                }
+            foreach (var dto in pending)
+            {
+                PushTrackToRDP(dto);
+            }
+
+            _repo.SetCoastingStatus();
+        }
+
+        private void PushTrackToRDP(AircraftDTO dto)
+        {
+            var target = _repo.AddOrUpdate(dto);
+
+            if (target.Track is null)
+            {
+                target.Track = _mmi.AddTrack(target);
+
+                RDP.AddQuickTag(target, new(target, target.Callsign));
             }
         }
 
