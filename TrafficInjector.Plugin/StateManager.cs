@@ -91,7 +91,13 @@ namespace TrafficInjector.Plugin
             {
                 if (aircraft.Track is not null)
                 {
+                    if (aircraft.QuickTag is not null)
+                    {
+                        RDP.RemoveQuickTag(aircraft.QuickTag);
+                    }
+
                     _mmi.RemoveTrack(aircraft);
+
                 }
             }
         }
