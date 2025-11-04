@@ -27,7 +27,7 @@ namespace TrafficInjector.Plugin
 
         }
 
-        public event EventHandler<FetcherEventArgs<AircraftDTO[]>> AircraftReceived;
+        public event EventHandler<FetcherEventArgs<AircraftDTO[]>>? AircraftReceived;
 
         public async Task<HttpResponseMessage> Fetch(Coordinate coord)
         {
@@ -36,13 +36,13 @@ namespace TrafficInjector.Plugin
             return res;
         }
 
-        public async Task<AircraftDTO[]> ParseRequest(HttpResponseMessage content)
+        public static async Task<AircraftDTO[]> ParseRequest(HttpResponseMessage content)
         {
             var data = await content.Content.ReadAsStringAsync();
 
             var parsedResponse = JsonSerializer.Deserialize<ResponseDTO>(data);
 
-            return parsedResponse?.Aircraft ?? Array.Empty<AircraftDTO>();
+            return parsedResponse?.Aircraft ?? [];
         }
 
         public async Task FetchAndFireDTOs(Coordinate coord)

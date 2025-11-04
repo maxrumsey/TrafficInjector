@@ -10,6 +10,9 @@
     <UseWindowsForms>true</UseWindowsForms>
     <VatSysDir>$(MSBuildProgramFiles32)\vatSys</VatSysDir>
 	<PlatformTarget>x86</PlatformTarget>
+	<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+	<EnableNETAnalyzers>true</EnableNETAnalyzers>
+	<AnalysisMode>Recommended</AnalysisMode>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,6 +26,14 @@
     <Reference Include="$(VatSysDir)\bin\vatSys.exe">
 		<Private>false</Private>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EditorConfigFiles Remove="C:\Users\max\source\repos\TrafficInjector\TrafficInjector.Plugin\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="C:\Users\max\source\repos\TrafficInjector\TrafficInjector.Plugin\.editorconfig" />
   </ItemGroup>
 
 </Project>
