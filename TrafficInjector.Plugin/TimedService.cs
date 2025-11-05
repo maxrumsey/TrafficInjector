@@ -13,10 +13,10 @@ namespace TrafficInjector.Plugin
     {
         private Timer? _fetchTimer;
         private Timer? _clearTimer;
-        private readonly Fetcher _fetcher;
+        private readonly IFetcher _fetcher;
         private readonly StateManager _stateManager;
 
-        public TimedService(Fetcher fetcher, StateManager stateManager)
+        public TimedService(IFetcher fetcher, StateManager stateManager)
         {
             _fetcher = fetcher;
             _stateManager = stateManager;

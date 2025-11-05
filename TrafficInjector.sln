@@ -1,9 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35931.197 d17.13
+VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrafficInjector.Plugin", "TrafficInjector.Plugin\TrafficInjector.Plugin.csproj", "{C1F77ACA-B5C2-4FC6-92D4-90566B46B81C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrafficInjector.Tests", "TrafficInjector.Tests\TrafficInjector.Tests.csproj", "{14141263-C841-49B4-8BB5-84F0040C8B3E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		coverage.ps1 = coverage.ps1
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +23,9 @@ Global
 		{C1F77ACA-B5C2-4FC6-92D4-90566B46B81C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C1F77ACA-B5C2-4FC6-92D4-90566B46B81C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C1F77ACA-B5C2-4FC6-92D4-90566B46B81C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14141263-C841-49B4-8BB5-84F0040C8B3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14141263-C841-49B4-8BB5-84F0040C8B3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14141263-C841-49B4-8BB5-84F0040C8B3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

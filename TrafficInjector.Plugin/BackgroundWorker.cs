@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,11 +10,11 @@ using vatsys;
 
 namespace TrafficInjector.Plugin
 {
-    internal class BackgroundWorker : BackgroundService
+    public class BackgroundWorker : BackgroundService
     {
-        private Fetcher _fetcher;
+        private IFetcher _fetcher;
 
-        public BackgroundWorker(Fetcher fetcher)
+        public BackgroundWorker(IFetcher fetcher)
         {
             _fetcher = fetcher;
         }

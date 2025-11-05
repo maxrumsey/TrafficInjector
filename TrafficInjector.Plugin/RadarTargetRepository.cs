@@ -35,7 +35,7 @@ namespace TrafficInjector.Plugin
         {
             lock (_targets)
             {
-                var targets = _targets.Where(x => x.LastUpdated <= DateTime.Now.Subtract(TimeSpan.FromSeconds(15))).ToArray();
+                var targets = _targets.Where(x => x.LastUpdated <= DateTime.Now.Subtract(Constants.TARGET_EXPIRY)).ToArray();
 
                 _targets.RemoveAll(targets.Contains);
 
@@ -49,7 +49,7 @@ namespace TrafficInjector.Plugin
             {
                 foreach (var target in _targets)
                 {
-                    if (target.LastUpdated <= DateTime.Now.Subtract(TimeSpan.FromSeconds(6)))
+                    if (target.LastUpdated <= DateTime.Now.Subtract(Constants.COASTING_TIMEOUT))
                     {
                         target.Coasting = true;
                     }
@@ -58,6 +58,14 @@ namespace TrafficInjector.Plugin
                         target.Coasting = false;
                     }
                 }
+            }
+        }
+
+        public RadarTarget[] GetAllTargets()
+        {
+            lock (_targets)
+            {
+                return _targets.ToArray();
             }
         }
     }

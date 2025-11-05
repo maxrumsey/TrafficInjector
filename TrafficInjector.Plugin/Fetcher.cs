@@ -11,7 +11,7 @@ using vatsys;
 
 namespace TrafficInjector.Plugin
 {
-    public class Fetcher
+    public class Fetcher : IFetcher
     {
         private readonly HttpClient _httpClient;
         private readonly string _baseUrl = "https://opendata.adsb.fi/api/v2/";
@@ -70,7 +70,7 @@ namespace TrafficInjector.Plugin
             {
                 try
                 {
-                    
+
                     await FetchAndFireDTOs(ctr);
 
                 }
