@@ -8,7 +8,7 @@ using vatsys;
 
 namespace TrafficInjector.Plugin
 {
-    public class vatSysAccessor
+    public class vatSysAccessor : IvatSysAccessor
     {
         private MethodInfo _addTrackMethod;
 
@@ -55,7 +55,7 @@ namespace TrafficInjector.Plugin
         public IList<Coordinate> GetVisCentres()
         {
             var visCentres = _visCentreGetter.Invoke(GetNetworkInstance(), []) ?? throw new Exception("Could not get vis centres");
-            
+
             return (IList<Coordinate>)visCentres;
         }
 

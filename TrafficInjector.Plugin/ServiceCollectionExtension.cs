@@ -14,7 +14,7 @@ namespace TrafficInjector.Plugin
             return
                 services.AddSingleton<IFetcher, Fetcher>()
                     .AddSingleton<StateManager>()
-                    .AddSingleton<vatSysAccessor>()
+                    .AddSingleton<IvatSysAccessor, vatSysAccessor>()
                     .AddSingleton<RadarTargetRepository>()
                     .AddSingleton<PendingDTORepository>()
                     .AddHttpClient()

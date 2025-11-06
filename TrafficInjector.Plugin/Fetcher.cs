@@ -16,9 +16,9 @@ namespace TrafficInjector.Plugin
         private readonly HttpClient _httpClient;
         private readonly string _baseUrl = "https://opendata.adsb.fi/api/v2/";
         private readonly ILogger _logger;
-        private readonly vatSysAccessor _vatSys;
+        private readonly IvatSysAccessor _vatSys;
 
-        public Fetcher(HttpClient httpClient, ILogger<Fetcher> logger, vatSysAccessor vatSys)
+        public Fetcher(HttpClient httpClient, ILogger<Fetcher> logger, IvatSysAccessor vatSys)
         {
             _logger = logger;
             _httpClient = httpClient;
@@ -91,7 +91,7 @@ namespace TrafficInjector.Plugin
             public T? Data { get; set; }
         }
 
-        private record ResponseDTO
+        internal record ResponseDTO
         {
             [JsonPropertyName("aircraft")]
             public AircraftDTO[]? Aircraft { get; set; }
