@@ -3,7 +3,7 @@ using vatsys;
 
 namespace TrafficInjector.Plugin
 {
-    public interface IvatSysAccessor
+    public interface IVatSysAccessor
     {
         Track AddTrack(RDP.RadarTrack rt);
         void ClearTracks();

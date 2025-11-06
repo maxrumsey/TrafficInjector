@@ -11,14 +11,14 @@ namespace TrafficInjector.Plugin
 {
     public class StateManager : IDisposable
     {
-        private vatSysAccessor _mmi;
+        private VatSysAccessor _mmi;
         private RadarTargetRepository _repo;
         private IHost _host;
         private Fetcher _fetcher;
         private PendingDTORepository _pendingDTOs;
 
         public StateManager(Fetcher fetcher,
-            vatSysAccessor MMI,
+            VatSysAccessor MMI,
             RadarTargetRepository targets,
             IHost host,
             PendingDTORepository pendingDTOs)

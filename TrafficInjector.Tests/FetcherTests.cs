@@ -14,7 +14,7 @@ namespace TrafficInjector.Tests
         {
             List<AircraftDTO> returns = [];
 
-            var mockVatsys = new Mock<IvatSysAccessor>();
+            var mockVatsys = new Mock<IVatSysAccessor>();
             mockVatsys.Setup(x => x.GetVisCentres()).Returns([ new() ]);
 
             var dto = GenerateDTO();
@@ -40,7 +40,7 @@ namespace TrafficInjector.Tests
         {
             List<AircraftDTO> returns = [];
 
-            var mockVatsys = new Mock<IvatSysAccessor>();
+            var mockVatsys = new Mock<IVatSysAccessor>();
             mockVatsys.Setup(x => x.GetVisCentres()).Returns([new()]);
 
             var dto = GenerateDTO();
@@ -67,7 +67,7 @@ namespace TrafficInjector.Tests
         {
             List<AircraftDTO> returns = [];
 
-            var mockVatsys = new Mock<IvatSysAccessor>();
+            var mockVatsys = new Mock<IVatSysAccessor>();
             mockVatsys.Setup(x => x.GetVisCentres()).Returns([new()]);
 
             var httpClient = GenerateHttpClient([]);
@@ -91,7 +91,7 @@ namespace TrafficInjector.Tests
         {
             List<AircraftDTO> returns = [];
 
-            var mockVatsys = new Mock<IvatSysAccessor>();
+            var mockVatsys = new Mock<IVatSysAccessor>();
             mockVatsys.Setup(x => x.GetVisCentres()).Returns([]);
 
             var dto = GenerateDTO();

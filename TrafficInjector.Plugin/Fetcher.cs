@@ -16,9 +16,9 @@ namespace TrafficInjector.Plugin
         private readonly HttpClient _httpClient;
         private readonly string _baseUrl = "https://opendata.adsb.fi/api/v2/";
         private readonly ILogger _logger;
-        private readonly IvatSysAccessor _vatSys;
+        private readonly IVatSysAccessor _vatSys;
 
-        public Fetcher(HttpClient httpClient, ILogger<Fetcher> logger, IvatSysAccessor vatSys)
+        public Fetcher(HttpClient httpClient, ILogger<Fetcher> logger, IVatSysAccessor vatSys)
         {
             _logger = logger;
             _httpClient = httpClient;

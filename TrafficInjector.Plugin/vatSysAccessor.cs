@@ -8,7 +8,7 @@ using vatsys;
 
 namespace TrafficInjector.Plugin
 {
-    public class vatSysAccessor : IvatSysAccessor
+    public class VatSysAccessor : IVatSysAccessor
     {
         private MethodInfo _addTrackMethod;
 
@@ -18,7 +18,7 @@ namespace TrafficInjector.Plugin
 
         private MethodInfo _clearTracksMethod;
 
-        public vatSysAccessor()
+        public VatSysAccessor()
         {
             _addTrackMethod = typeof(MMI).GetMethod("AddTrack",
                 System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic, null,
