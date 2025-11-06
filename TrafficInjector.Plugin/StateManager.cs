@@ -11,14 +11,14 @@ namespace TrafficInjector.Plugin
 {
     public class StateManager : IDisposable
     {
-        private VatSysAccessor _mmi;
+        private IVatSysAccessor _mmi;
         private RadarTargetRepository _repo;
         private IHost _host;
-        private Fetcher _fetcher;
+        private IFetcher _fetcher;
         private PendingDTORepository _pendingDTOs;
 
-        public StateManager(Fetcher fetcher,
-            VatSysAccessor MMI,
+        public StateManager(IFetcher fetcher,
+            IVatSysAccessor MMI,
             RadarTargetRepository targets,
             IHost host,
             PendingDTORepository pendingDTOs)
@@ -74,7 +74,7 @@ namespace TrafficInjector.Plugin
             {
                 target.Track = _mmi.AddTrack(target);
 
-                RDP.AddQuickTag(target, new(target, target.Callsign));
+                _mmi.AddQuickTag(target, new(target, target.Callsign));
             }
         }
 
@@ -93,7 +93,7 @@ namespace TrafficInjector.Plugin
                 {
                     if (aircraft.QuickTag is not null)
                     {
-                        RDP.RemoveQuickTag(aircraft.QuickTag);
+                        _mmi.RemoveQuickTag(aircraft.QuickTag);
                     }
 
                     _mmi.RemoveTrack(aircraft);

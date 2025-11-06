@@ -364,3 +364,5 @@ FodyWeavers.xsd
 
 # Code coverage report
 report/**
+
+*cobertura*

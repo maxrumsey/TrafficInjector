@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using vatsys;
+using static vatsys.RDP;
 
 namespace TrafficInjector.Plugin
 {
@@ -9,5 +10,7 @@ namespace TrafficInjector.Plugin
         void ClearTracks();
         IList<Coordinate> GetVisCentres();
         void RemoveTrack(RDP.RadarTrack rt);
+        void AddQuickTag(RadarTrack rt, QuickTag qt);
+        void RemoveQuickTag(QuickTag qt);
     }
 }

@@ -1,4 +1,4 @@
-dotnet-coverage collect -f xml -o coverage.xml dotnet test
-reportgenerator -reports:coverage.xml -targetdir:.\report -assemblyfilters:-TrafficInjector.Tests.dll
+dotnet-coverage collect -f cobertura -o coverage.cobertura dotnet test
+reportgenerator -reports:coverage.cobertura -targetdir:.\report -assemblyfilters:+TrafficInjector.Plugin
 
 Invoke-Item .\report\index.html

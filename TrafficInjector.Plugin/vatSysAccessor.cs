@@ -65,5 +65,15 @@ namespace TrafficInjector.Plugin
 
             return (Network)inst;
         }
+
+        public void AddQuickTag(RDP.RadarTrack rt, QuickTag qt)
+        {
+            RDP.AddQuickTag(rt, qt);
+        }
+
+        public void RemoveQuickTag(QuickTag qt)
+        {
+            RDP.RemoveQuickTag(qt);
+        }
     }
 }
