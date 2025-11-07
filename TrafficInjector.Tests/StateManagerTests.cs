@@ -33,6 +33,85 @@ namespace TrafficInjector.Tests
             iVatSysAccessorMock.Verify(x => x.RemoveQuickTag(target.QuickTag), Times.Once);
             iVatSysAccessorMock.Verify(x => x.RemoveTrack(target), Times.Once);
         }
+
+        [Fact]
+        public void Disposed_TracksAreCleared()
+        {
+            var iVatSysAccessorMock = new Mock<IVatSysAccessor>();
+            iVatSysAccessorMock.Setup(x => x.ClearTracks()).Verifiable();
+
+            var sut = new StateManager(null!, iVatSysAccessorMock.Object, null!, null!, null!);
+
+            sut.Dispose();
+
+            iVatSysAccessorMock.Verify(x => x.ClearTracks(), Times.Once);
+        }
+
+        [Fact]
+        public void UpdateTracks_EmptiesPending()
+        {
+            var iVatSysAccessorMock = new Mock<IVatSysAccessor>();
+
+            var pendingRepo = new PendingDTORepository();
+
+            pendingRepo.AddOrUpdate(GenerateDTO());
+
+            var sut = new StateManager(null!, iVatSysAccessorMock.Object, new(), null!, pendingRepo);
+
+            sut.UpdateTracks();
+
+            Assert.Empty(pendingRepo.EmptyAndReturnPending());
+        }
+
+        [Fact]
+        public void UpdateTracks_SetsCoastingStatus()
+        {
+            var iVatSysAccessorMock = new Mock<IVatSysAccessor>();
+
+            var pendingRepo = new PendingDTORepository();
+            var repo = new RadarTargetRepository();
+
+            pendingRepo.AddOrUpdate(GenerateDTO());
+
+            var sut = new StateManager(null!, iVatSysAccessorMock.Object, repo, null!, pendingRepo);
+
+            sut.UpdateTracks();
+
+            Assert.Empty(repo.GetAllTargets().Where(t => t.Coasting));
+            
+            var target = repo.GetAllTargets().First();
+
+            target.LastUpdated = DateTime.Now.Subtract(Constants.COASTING_TIMEOUT).Subtract(TimeSpan.FromSeconds(1));
+                        
+            sut.UpdateTracks();
+
+            Assert.Equal(target, repo.GetAllTargets().Where(t => t.Coasting).First());
+        }
+
+        [Fact]
+        public void UpdateTracks_CreatesTrackAndQuicktag()
+        {
+            var iVatSysAccessorMock = new Mock<IVatSysAccessor>();
+
+            iVatSysAccessorMock.Setup(x => x.AddTrack(It.IsAny<RadarTarget>())).Returns((RadarTarget t) => CreateDummyTrack(t)).Verifiable();
+
+            var pendingRepo = new PendingDTORepository();
+            var repo = new RadarTargetRepository();
+
+            pendingRepo.AddOrUpdate(GenerateDTO());
+
+            var sut = new StateManager(null!, iVatSysAccessorMock.Object, repo, null!, pendingRepo);
+
+            sut.UpdateTracks();
+
+            var target = repo.GetAllTargets().First();
+
+            Assert.NotNull(target.Track);
+
+            iVatSysAccessorMock.Verify(x => x.AddTrack(target), Times.Once);
+            iVatSysAccessorMock.Verify(x => x.AddQuickTag(target, It.IsAny<QuickTag>()), Times.Once);
+        }
+
         private AircraftDTO GenerateDTO()
         {
             return new()
