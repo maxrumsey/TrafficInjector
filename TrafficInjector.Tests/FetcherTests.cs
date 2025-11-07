@@ -87,17 +87,54 @@ namespace TrafficInjector.Tests
         }
 
         [Fact]
-        public async Task FetchForAllVisCentres_ReturnsNilIfNoVisCtrs()
+        public async Task FetchForAllVisCentres_ReturnsNilIfNullDTO()
         {
             List<AircraftDTO> returns = [];
 
             var mockVatsys = new Mock<IVatSysAccessor>();
-            mockVatsys.Setup(x => x.GetVisCentres()).Returns([]);
+            mockVatsys.Setup(x => x.GetVisCentres()).Returns([new()]);
 
-            var dto = GenerateDTO();
-            dto.Latitude = null; // Invalid DTO
+            var httpClient = GenerateHttpClient(null, "{}");
 
-            var httpClient = GenerateHttpClient([dto]);
+            var sut = new Fetcher(httpClient, null!, mockVatsys.Object);
+
+            sut.AircraftReceived += (s, e) =>
+            {
+                Assert.NotNull(e.Data);
+
+                returns.AddRange(e.Data);
+            };
+
+            await sut.FetchForAllVisCentres();
+
+            Assert.Empty(returns);
+        }
+
+        [Fact]
+        public async Task FetchForAllVisCentres_ThrowsIfNoVisCtrs()
+        {
+            List<AircraftDTO> returns = [];
+
+            var mockVatsys = new Mock<IVatSysAccessor>();
+            mockVatsys.Setup(x => x.GetVisCentres()).Verifiable();
+
+            var sut = new Fetcher(new(), null!, mockVatsys.Object);
+
+            await Assert.ThrowsAsync<Exception>(sut.FetchForAllVisCentres);
+
+            mockVatsys.Verify(x => x.GetVisCentres(), Times.Once);
+
+        }
+
+        [Fact]
+        public async Task FetchForAllVisCentres_ReturnsNilIfAircraftIsNull()
+        {
+            List<AircraftDTO> returns = [];
+
+            var mockVatsys = new Mock<IVatSysAccessor>();
+            mockVatsys.Setup(x => x.GetVisCentres()).Returns([new()]);
+
+            var httpClient = GenerateHttpClient(null);
 
             var sut = new Fetcher(httpClient, null!, mockVatsys.Object);
 
@@ -138,11 +175,11 @@ namespace TrafficInjector.Tests
             };
         }
 
-        private HttpClient GenerateHttpClient(AircraftDTO[]? dtos)
+        private HttpClient GenerateHttpClient(AircraftDTO[]? dtos, string? response = null)
         {
             var mockHttp = new MockHttpMessageHandler();
             mockHttp.When("*")
-                .Respond("application/json", CreateDummyResponse(dtos));
+                .Respond("application/json", response ?? CreateDummyResponse(dtos));
             return new HttpClient(mockHttp);
         }
     }
